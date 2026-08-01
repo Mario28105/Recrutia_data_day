@@ -73,7 +73,7 @@ Postuler à :
 
 
 <form method="POST"
-action="{{ route('offres.postuler',$offre->id) }}"
+action="{{ route('candidatures.store',$offre->id) }}"
 enctype="multipart/form-data">
 
 
