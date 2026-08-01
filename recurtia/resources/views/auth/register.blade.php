@@ -170,6 +170,60 @@ input:focus{
 
 
 
+/* CHOIX DU ROLE */
+
+.role-choice{
+
+    display:flex;
+
+    gap:12px;
+
+    margin-bottom:18px;
+
+}
+
+.role-option{
+
+    flex:1;
+
+    text-align:center;
+
+    padding:14px 10px;
+
+    border:2px solid #ddd;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    color:#555;
+
+}
+
+.role-option input{
+
+    display:none;
+
+}
+
+.role-option.selected{
+
+    border-color:#1D9E75;
+
+    background:#e6f7f1;
+
+    color:#0F6E56;
+
+}
+
+#entreprise-field{
+
+    display:none;
+
+}
+
 /* BOUTON CREER */
 
 
@@ -294,7 +348,7 @@ Recurtia<span>.</span>
 
 <p class="subtitle">
 
-Créez votre espace candidat
+Créez votre espace candidat ou recruteur
 
 </p>
 
@@ -338,10 +392,27 @@ Créer un compte
 
 
 
-<form method="POST" action="{{ route('register') }}">
+<form method="POST" action="{{ route('register') }}" id="register-form">
 
 @csrf
 
+<label>
+Je suis...
+</label>
+
+<div class="role-choice">
+
+    <label class="role-option {{ old('role','candidat') == 'candidat' ? 'selected' : '' }}" data-role="candidat">
+        <input type="radio" name="role" value="candidat" {{ old('role','candidat') == 'candidat' ? 'checked' : '' }}>
+        🎓 Candidat
+    </label>
+
+    <label class="role-option {{ old('role') == 'recruteur' ? 'selected' : '' }}" data-role="recruteur">
+        <input type="radio" name="role" value="recruteur" {{ old('role') == 'recruteur' ? 'checked' : '' }}>
+        🏢 Recruteur
+    </label>
+
+</div>
 
 
 
@@ -391,6 +462,28 @@ required>
 
 
 
+
+
+<div id="entreprise-field">
+
+<label>
+
+Nom de l'entreprise
+
+</label>
+
+
+<input
+
+type="text"
+
+name="entreprise"
+
+value="{{ old('entreprise') }}"
+
+placeholder="Nom de votre entreprise">
+
+</div>
 
 
 <label>
@@ -491,6 +584,29 @@ Se connecter
 
 
 
+
+<script>
+
+function updateRoleUI() {
+
+    const selected = document.querySelector('input[name="role"]:checked').value;
+
+    document.querySelectorAll('.role-option').forEach(function (el) {
+        el.classList.toggle('selected', el.dataset.role === selected);
+    });
+
+    document.getElementById('entreprise-field').style.display =
+        selected === 'recruteur' ? 'block' : 'none';
+
+}
+
+document.querySelectorAll('input[name="role"]').forEach(function (radio) {
+    radio.addEventListener('change', updateRoleUI);
+});
+
+updateRoleUI();
+
+</script>
 
 </body>
 

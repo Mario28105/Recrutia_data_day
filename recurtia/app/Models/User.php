@@ -20,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
 
@@ -57,6 +58,38 @@ class User extends Authenticatable
     public function candidat()
     {
          return $this->hasOne(Candidat::class);
+    }
+
+    /**
+     * Un utilisateur recruteur possède un profil recruteur
+     */
+    public function recruteur()
+    {
+        return $this->hasOne(Recruteur::class);
+    }
+
+    /**
+     * Un recruteur possède plusieurs offres publiées
+     */
+    public function offres()
+    {
+        return $this->hasMany(Offre::class);
+    }
+
+    /**
+     * Vérifie si l'utilisateur est un recruteur
+     */
+    public function isRecruteur(): bool
+    {
+        return $this->role === 'recruteur';
+    }
+
+    /**
+     * Vérifie si l'utilisateur est un candidat
+     */
+    public function isCandidat(): bool
+    {
+        return $this->role === 'candidat';
     }
 
 }

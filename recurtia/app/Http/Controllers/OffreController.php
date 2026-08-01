@@ -16,6 +16,11 @@ class OffreController extends Controller
      */
     public function dashboard()
     {
+        // Un recruteur possède son propre tableau de bord
+        if (Auth::user()->isRecruteur()) {
+            return redirect()->route('recruteur.dashboard');
+        }
+
         // Récupérer les offres disponibles
         $offres = Offre::latest()->take(5)->get();
 
