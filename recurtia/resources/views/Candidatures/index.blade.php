@@ -73,6 +73,11 @@ Mes candidatures
 </h1>
 
 
+@if(session('success'))
+<p style="background:#e6f7f1;color:#087857;padding:12px 18px;border-radius:12px;margin-bottom:20px;">
+{{ session('success') }}
+</p>
+@endif
 
 
 @forelse($candidatures as $candidature)

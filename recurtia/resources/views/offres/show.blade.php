@@ -141,6 +141,25 @@ Postuler
 </h2>
 
 
+@if(session('success'))
+<p style="background:#e6f7f1;color:#087857;padding:12px 18px;border-radius:12px;margin-bottom:15px;">
+{{ session('success') }}
+</p>
+@endif
+
+@if($errors->any())
+<div style="background:#ffe5e5;color:#c0392b;padding:12px 18px;border-radius:12px;margin-bottom:15px;">
+<strong>Votre candidature n'a pas pu etre envoyee :</strong>
+<ul style="margin:8px 0 0 20px;">
+@foreach($errors->all() as $error)
+<li>{{ $error }}</li>
+@endforeach
+</ul>
+</div>
+@endif
+
+
+
 
 
 <form action="{{route('candidatures.store',$offre->id)}}"
@@ -160,6 +179,10 @@ Votre CV
 <input type="file"
 name="cv">
 
+@error('cv')
+<div style="color:#c0392b;font-size:13px;margin-top:5px;">{{ $message }}</div>
+@enderror
+
 
 
 
@@ -171,7 +194,11 @@ Lettre de motivation
 
 <textarea
 name="lettre_motivation"
-rows="6"></textarea>
+rows="6">{{ old('lettre_motivation') }}</textarea>
+
+@error('lettre_motivation')
+<div style="color:#c0392b;font-size:13px;margin-top:5px;">{{ $message }}</div>
+@enderror
 
 
 
