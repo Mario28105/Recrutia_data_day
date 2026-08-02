@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OffreController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CandidatureController;
+use App\Http\Controllers\CandidatController;
 
 use App\Http\Controllers\Recruteur\DashboardController as RecruteurDashboardController;
 use App\Http\Controllers\Recruteur\OffreController as RecruteurOffreController;
@@ -59,6 +60,13 @@ Route::middleware('auth')->group(function(){
 
 
 
+    Route::get('/mes-matchs',
+        [OffreController::class,'matchs']
+    )
+    ->name('matchs.index');
+
+
+
     Route::get('/offres/{id}',
         [OffreController::class,'show']
     )
@@ -87,6 +95,23 @@ Route::middleware('auth')->group(function(){
     )
     ->name('candidatures.store');
 
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Profil candidat (téléphone, niveau d'étude, compétences)
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/mon-profil',
+        [CandidatController::class,'edit']
+    )
+    ->name('candidat.profil.edit');
+
+    Route::patch('/mon-profil',
+        [CandidatController::class,'update']
+    )
+    ->name('candidat.profil.update');
 
 
 });

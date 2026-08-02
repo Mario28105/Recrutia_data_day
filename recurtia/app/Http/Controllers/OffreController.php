@@ -30,6 +30,54 @@ class OffreController extends Controller
 
 
     /**
+     * Mes Matchs
+     * Calcule un score de correspondance entre le profil du candidat
+     * (compétences renseignées) et chaque offre disponible.
+     */
+    public function matchs()
+    {
+        $candidat = Auth::user()->candidat;
+
+        // Compétences du candidat sous forme de liste de mots-clés
+        $motsCles = [];
+
+        if ($candidat && $candidat->competences) {
+            $motsCles = collect(preg_split('/[,\n]+/', $candidat->competences))
+                ->map(fn ($mot) => trim(mb_strtolower($mot)))
+                ->filter(fn ($mot) => $mot !== '')
+                ->unique()
+                ->values()
+                ->all();
+        }
+
+        $offres = Offre::latest()->get()->map(function ($offre) use ($motsCles) {
+
+            $texte = mb_strtolower($offre->titre.' '.$offre->description.' '.$offre->entreprise);
+
+            $motsTrouves = collect($motsCles)->filter(
+                fn ($mot) => str_contains($texte, $mot)
+            );
+
+            $offre->score = count($motsCles) > 0
+                ? (int) round(($motsTrouves->count() / count($motsCles)) * 100)
+                : null;
+
+            $offre->mots_correspondants = $motsTrouves->values();
+
+            return $offre;
+        });
+
+        // Les meilleures correspondances en premier
+        $offres = $offres->sortByDesc('score')->values();
+
+        $profilComplet = count($motsCles) > 0;
+
+        return view('matchs.index', compact('offres', 'profilComplet'));
+    }
+
+
+
+    /**
      * Liste des offres avec recherche + tri
      */
     public function index(Request $request)

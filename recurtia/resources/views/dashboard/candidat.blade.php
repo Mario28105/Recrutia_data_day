@@ -456,8 +456,8 @@ Dashboard
 
 
 
-<a href="#"
-class="db-nav-link">
+<a href="{{ route('matchs.index') }}"
+class="db-nav-link {{ request()->routeIs('matchs.index') ? 'active' : '' }}">
 
 
 <i class="material-icons">
@@ -491,6 +491,21 @@ Mes candidatures
 
 
 
+
+
+<a href="{{ route('candidat.profil.edit') }}"
+class="db-nav-link">
+
+
+<i class="material-icons">
+badge
+</i>
+
+
+Profil candidat
+
+
+</a>
 
 
 <a href="{{ route('profile.edit') }}"
