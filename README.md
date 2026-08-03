@@ -1,5 +1,6 @@
-# Recrutia_data_day
-Participant : 
+# Recrutia_data_day 
+Nom du groupe : BrainStorm Troop
+Membre : 
 
 Mandresy 
 Fifaliana 
