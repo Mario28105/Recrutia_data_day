@@ -1,34 +1,33 @@
-FROM php:8.2-fpm
+FROM php:8.2-apache
 
-# Installation des dépendances requises et des extensions PDO PostgreSQL
+# 1. Installation des dépendances système et du driver PostgreSQL
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
+    libpq-dev \
     zip \
     unzip \
-    libpq-dev \
+    git \
     && docker-php-ext-install pdo pdo_pgsql pgsql
 
-# Récupération de Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# 2. Redirection d'Apache vers le dossier public/ de Laravel
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+RUN a2enmod rewrite
 
-WORKDIR /var/www
-
+WORKDIR /var/www/html
 COPY . .
 
-# Installation des dépendances Laravel
+# 3. Installation de Composer et des dépendances PHP
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Permissions sur les dossiers storage et cache
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+# 4. Ajustement des permissions
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-EXPOSE 10000
+EXPOSE 80
 
-# Commande de lancement avec cache + migrations automatiques
+# 5. Démarrage (Cache + Migrations DB + Serveur Apache)
 CMD php artisan config:cache && \
     php artisan route:cache && \
     php artisan migrate --force && \
-    php artisan serve --host=0.0.0.0 --port=10000
+    apache2-foreground
