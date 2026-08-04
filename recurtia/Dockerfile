@@ -1,6 +1,6 @@
 FROM php:8.2-cli
 
-# Installation des dépendances Postgres + utilitaires
+# Installation des paquets requis et des pilotes Postgres
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     zip \
@@ -14,13 +14,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-# Installation des dépendances Composer sans exécuter les scripts post-install pendant le build
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+# Installation de Composer sans exécuter de scripts ni d'optimisations bloquantes
+RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts
 
 EXPOSE 10000
 
-# Démarrage : Cache + Migrations DB + Lancement du serveur
-CMD php artisan config:cache && \
-    php artisan route:cache && \
+# Commande de démarrage
+CMD php artisan config:clear && \
     php artisan migrate --force && \
     php artisan serve --host=0.0.0.0 --port=10000
