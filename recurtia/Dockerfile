@@ -13,6 +13,9 @@ WORKDIR /var/www
 # Copie de tout le projet dans le conteneur
 COPY . .
 
+RUN apt-get update && apt-get install -y libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql pgsql
+    
 # Installation des dépendances Laravel via Composer
 RUN composer install --no-dev --optimize-autoloader
 
